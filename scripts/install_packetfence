@@ -1,0 +1,16 @@
+!#/bin/bash
+author="WeaZzik"
+version="1.0"
+host_IP=$(hostname -I | awk '{print $1}')
+host_hostname=$(hostname)
+host_OS=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d= -f2 | tr -d '"')
+
+systemctl disable --now apparmor
+apt install linux-headers-$(uname -r) -y
+apt install gnupg sudo curl -y
+curl -fsSL https://inverse.ca/downloads/GPG_PUBLIC_KEY | gpg --dearmor -o /etc/apt/keyrings/packetfence.gpg
+echo "deb [signed-by=/etc/apt/keyrings/packetfence.gpg] https://inverse.ca/downloads/PacketFence/debian/15.0 bookworm bookworm" > /etc/apt/sources.list.d/packetfence.list
+apt-get update -y
+apt-get install packetfence -y
+
+echo "Try to access http://$host_IP:1443 or check the service status..."
